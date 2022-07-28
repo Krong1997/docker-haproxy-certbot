@@ -34,17 +34,11 @@ RUN apt-get update && apt-get install -y supervisor cron libnl-utils net-tools i
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# 嘗試後可以build過 https://stackoverflow.com/questions/55386246/w-failed-to-fetch-http-deb-debian-org-debian-dists-jessie-updates-main-binary
+# 嘗試無效 https://unix.stackexchange.com/questions/508724/failed-to-fetch-jessie-backports-repository
 # Install Certbot
-# RUN echo 'deb http://archive.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list
-RUN echo "deb [check-valid-until=no] http://archive.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list
-RUN sed -i '/deb http:\/\/deb.debian.org\/debian jessie-updates main/d' /etc/apt/sources.list
-RUN apt-get -o Acquire::Check-Valid-Until=false update
-RUN apt-get install -y certbot -t jessie-backports && \
+RUN echo 'deb http://archive.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list
+RUN apt-get update && apt-get install -y certbot -t jessie-backports && \
   apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# RUN apt-get update && apt-get install -y certbot -t jessie-backports && \
-#   apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Setup Certbot
 RUN mkdir -p /usr/local/etc/haproxy/certs.d
